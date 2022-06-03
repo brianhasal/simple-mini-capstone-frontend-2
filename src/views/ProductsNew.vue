@@ -4,7 +4,8 @@ import axios from 'axios';
   export default {
     data: function () {
       return {
-        newProductParams: {}
+        newProductParams: {},
+        errors: [],
       };
     },
     created: function () {},
@@ -14,6 +15,10 @@ import axios from 'axios';
           console.log("Adding Product", response);
           this.$router.push("/products");
         })
+        .catch((error) => {
+          console.log("product create error", error.response);
+          this.errors = error.response.data.errors;
+        });
       }
     },
   };
@@ -22,7 +27,11 @@ import axios from 'axios';
 <template>
   <div class="home">
     <h1>Create Product</h1>
+    <form v-on:submit.prevent="createProduct()">
       <div>
+        <ul>
+          <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
+        </ul>
         <div>
           Name: 
           <input v-model="newProductParams.name" type="text">
@@ -40,9 +49,10 @@ import axios from 'axios';
           <input v-model="newProductParams.image_url" type="text">
         </div>
         <div>
-          <button v-on:click="createProduct()">Create</button>
+          <input type="submit" value="Create" />
         </div>
       </div>
+    </form>
   </div>
 </template>
 
